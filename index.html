@@ -1,0 +1,505 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>
+          /* Base reset */
+          * { box-sizing: border-box; }
+          /* User CSS */
+          
+        </style>
+        <script>
+            // Capture console.log to display in parent (Optional future enhancement, currently just preventing errors)
+            window.onerror = function(message, source, lineno, colno, error) {
+                console.error('Preview Error:', message);
+            };
+        </script>
+      </head>
+      <body>
+        <!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOAL SPHERE - Auto Live Links</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0f1e 0%, #0a1929 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            padding: 25px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            font-size: 2.8em;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .logo span {
+            color: #ff5722;
+        }
+
+        .tagline {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 8px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: rgba(0,0,0,0.5);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ff00;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .status-dot.offline {
+            background: #ff4444;
+            animation: none;
+        }
+
+        .last-updated {
+            font-size: 0.85em;
+            color: #aaa;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 1.6em;
+            margin: 30px 0 20px;
+            border-left: 5px solid #ff5722;
+            padding-left: 15px;
+        }
+
+        /* Matches Grid */
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .match-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .match-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .match-header {
+            background: linear-gradient(135deg, #ff5722, #e64a19);
+            padding: 10px 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .match-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .league {
+            color: #ff5722;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .teams {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .time {
+            color: #aaa;
+            font-size: 0.85em;
+            margin: 8px 0;
+        }
+
+        .watch-btn {
+            background: #ff5722;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: 0.3s;
+        }
+
+        .watch-btn:hover {
+            background: #e64a19;
+            transform: scale(1.05);
+        }
+
+        .no-matches {
+            text-align: center;
+            padding: 60px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            grid-column: 1/-1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0,0,0,0.4);
+            margin-top: 50px;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">GOAL <span>SPHERE</span></div>
+    <div class="tagline">⚽ Automated Live Match Links | Real-time Updates ⚽</div>
+</div>
+
+<div class="container">
+    <div class="status-bar">
+        <div class="status">
+            <div class="status-dot" id="statusDot"></div>
+            <span id="statusText">🔄 Fetching live matches...</span>
+        </div>
+        <div class="last-updated" id="lastUpdated">Last updated: --</div>
+    </div>
+
+    <div class="section-title">🔴 LIVE MATCHES & STREAMS</div>
+    <div id="matchesContainer" class="matches-grid">
+        <div class="no-matches">
+            <div>⏳ Loading matches from server...</div>
+            <div style="font-size: 0.9em; margin-top: 10px;">This may take a few seconds</div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 GOAL SPHERE | Automated via GitHub JSON | Live Football Links</p>
+    <p style="font-size: 11px; margin-top: 8px;">Data updates every 30 minutes | All links are from public sources</p>
+</footer>
+
+<script>
+    // ============================================
+    // GOAL SPHERE - FULLY AUTOMATED LIVE LINKS
+    // Using GitHub JSON Dataset (No API Key Required)
+    // Auto-updates every 30 minutes
+    // ============================================
+
+    let currentMatches = [];
+
+    // Multiple GitHub JSON sources (if one fails, try next)
+    const dataSources = [
+        {
+            name: 'Premier League',
+            url: 'https://raw.githubusercontent.com/openfootball/football.json/master/2024-25/en.1.json',
+            type: 'league'
+        },
+        {
+            name: 'La Liga',
+            url: 'https://raw.githubusercontent.com/openfootball/football.json/master/2024-25/es.1.json',
+            type: 'league'
+        },
+        {
+            name: 'Serie A',
+            url: 'https://raw.githubusercontent.com/openfootball/football.json/master/2024-25/it.1.json',
+            type: 'league'
+        },
+        {
+            name: 'Bundesliga',
+            url: 'https://raw.githubusercontent.com/openfootball/football.json/master/2024-25/de.1.json',
+            type: 'league'
+        },
+        {
+            name: 'Ligue 1',
+            url: 'https://raw.githubusercontent.com/openfootball/football.json/master/2024-25/fr.1.json',
+            type: 'league'
+        },
+        {
+            name: 'UEFA Champions League',
+            url: 'https://raw.githubusercontent.com/openfootball/football.json/master/2024-25/cl.json',
+            type: 'league'
+        }
+    ];
+
+    // Fallback demo data (if all sources fail)
+    const fallbackMatches = [
+        { home: "Manchester United", away: "Liverpool", league: "Premier League", date: "Today", time: "21:00", status: "LIVE" },
+        { home: "Real Madrid", away: "Barcelona", league: "La Liga", date: "Today", time: "22:30", status: "UPCOMING" },
+        { home: "Bayern Munich", away: "Borussia Dortmund", league: "Bundesliga", date: "Today", time: "20:00", status: "LIVE" },
+        { home: "PSG", away: "Marseille", league: "Ligue 1", date: "Today", time: "23:00", status: "UPCOMING" },
+        { home: "Inter Milan", away: "AC Milan", league: "Serie A", date: "Today", time: "21:45", status: "LIVE" }
+    ];
+
+    // Format date to readable string
+    function formatDate(dateStr) {
+        if (!dateStr) return "Today";
+        try {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+        } catch(e) {
+            return "Today";
+        }
+    }
+
+    // Format time
+    function formatTime(timeStr) {
+        if (!timeStr) return "Time TBA";
+        return timeStr;
+    }
+
+    // Generate YouTube search link for match
+    function getStreamLink(homeTeam, awayTeam) {
+        const searchQuery = encodeURIComponent(`${homeTeam} vs ${awayTeam} live stream`);
+        return `https://www.youtube.com/results?search_query=${searchQuery}`;
+    }
+
+    // Parse league data and extract matches
+    function parseLeagueData(data, leagueName) {
+        const matches = [];
+        
+        if (!data || !data.matches) return matches;
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const nextWeek = new Date(today);
+        nextWeek.setDate(today.getDate() + 7);
+        
+        data.matches.forEach(match => {
+            const matchDate = new Date(match.date);
+            // Show matches from today to next 7 days
+            if (matchDate >= today && matchDate <= nextWeek) {
+                matches.push({
+                    home: match.team1,
+                    away: match.team2,
+                    league: leagueName,
+                    date: formatDate(match.date),
+                    time: match.time || "Time TBA",
+                    status: matchDate.toDateString() === today.toDateString() ? "🔴 LIVE" : "📅 UPCOMING",
+                    isLive: matchDate.toDateString() === today.toDateString()
+                });
+            }
+        });
+        
+        return matches;
+    }
+
+    // Fetch data from a single source
+    async function fetchSource(source) {
+        try {
+            console.log(`Fetching from ${source.name}...`);
+            const response = await fetch(source.url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            return parseLeagueData(data, source.name);
+        } catch (error) {
+            console.log(`Failed to fetch ${source.name}:`, error.message);
+            return [];
+        }
+    }
+
+    // Fetch all sources
+    async function fetchAllMatches() {
+        updateStatus('loading', '🔄 Fetching live matches from GitHub JSON...');
+        
+        try {
+            // Fetch from all sources in parallel
+            const results = await Promise.all(dataSources.map(source => fetchSource(source)));
+            
+            // Combine all matches
+            let allMatches = [];
+            results.forEach(matches => {
+                allMatches = allMatches.concat(matches);
+            });
+            
+            // Remove duplicates (same home+away+date)
+            const uniqueMatches = [];
+            const seen = new Set();
+            for (const match of allMatches) {
+                const key = `${match.home}-${match.away}-${match.date}`;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    uniqueMatches.push(match);
+                }
+            }
+            
+            // Sort: LIVE matches first, then by date
+            uniqueMatches.sort((a, b) => {
+                if (a.isLive && !b.isLive) return -1;
+                if (!a.isLive && b.isLive) return 1;
+                return 0;
+            });
+            
+            currentMatches = uniqueMatches;
+            
+            if (currentMatches.length > 0) {
+                updateStatus('online', `✅ Connected | ${currentMatches.length} matches found`);
+                displayMatches(currentMatches);
+            } else {
+                // Use fallback data if no matches found
+                console.log("No matches from API, using fallback");
+                displayFallbackMatches();
+                updateStatus('online', '⚠️ Using demo data (API returned empty)');
+            }
+            
+            updateLastUpdated();
+            
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            displayFallbackMatches();
+            updateStatus('offline', '⚠️ Using demo mode - GitHub data unavailable');
+            updateLastUpdated();
+        }
+    }
+
+    // Display fallback matches (when API fails)
+    function displayFallbackMatches() {
+        const matches = fallbackMatches.map(m => ({
+            ...m,
+            isLive: m.status === "LIVE"
+        }));
+        displayMatches(matches);
+    }
+
+    // Display matches on the page
+    function displayMatches(matches) {
+        const container = document.getElementById('matchesContainer');
+        
+        if (!matches || matches.length === 0) {
+            container.innerHTML = `
+                <div class="no-matches">
+                    <div>📭 No live matches at the moment</div>
+                    <div style="font-size: 0.9em; margin-top: 10px;">Auto-refreshing every 30 minutes. Check back soon!</div>
+                </div>
+            `;
+            return;
+        }
+        
+        // Show only first 20 matches
+        const showMatches = matches.slice(0, 24);
+        
+        container.innerHTML = showMatches.map(match => `
+            <div class="match-card">
+                <div class="match-header">
+                    ${match.status === "🔴 LIVE" ? "🔴 LIVE NOW" : "📅 UPCOMING"} • ${match.league}
+                </div>
+                <div class="match-body">
+                    <div class="league">🏆 ${match.league}</div>
+                    <div class="teams">⚽ ${match.home} vs ${match.away}</div>
+                    <div class="time">📅 ${match.date} • ⏰ ${match.time}</div>
+                    <button class="watch-btn" onclick="window.open('${getStreamLink(match.home, match.away)}', '_blank')">
+                        ${match.status === "🔴 LIVE" ? "▶ WATCH LIVE" : "🔔 GET REMINDER"}
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Update status bar
+    function updateStatus(state, message) {
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        
+        statusText.innerHTML = message;
+        
+        if (state === 'online') {
+            statusDot.className = 'status-dot';
+        } else if (state === 'offline') {
+            statusDot.className = 'status-dot offline';
+        } else {
+            statusDot.className = 'status-dot';
+        }
+    }
+
+    // Update last updated time
+    function updateLastUpdated() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+        document.getElementById('lastUpdated').innerHTML = `🔄 Last updated: ${timeString} | Auto-refresh every 30 min`;
+    }
+
+    // Initial load
+    fetchAllMatches();
+    
+    // Auto-refresh every 30 minutes (1800000 milliseconds)
+    setInterval(fetchAllMatches, 1800000);
+    
+    // Optional: Refresh also when page becomes visible again
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            fetchAllMatches();
+        }
+    });
+    
+    console.log('🚀 GOAL SPHERE - Automated Live Links Active');
+    console.log('📡 Using GitHub JSON datasets | Auto-refresh every 30 minutes');
+</script>
+</body>
+</html>
+        <script>
+          try {
+            
+          } catch (err) {
+            console.error('Runtime Error:', err);
+            document.body.innerHTML += '<div style="color:red; background:#ffe6e6; padding:10px; margin-top:20px; border-radius:4px; border:1px solid red;"><strong>Runtime Error:</strong> ' + err.message + '</div>';
+          }
+        </script>
+      </body>
+    </html>
+  
